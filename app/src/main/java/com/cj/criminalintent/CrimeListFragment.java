@@ -60,7 +60,6 @@ public class CrimeListFragment extends Fragment {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecycleView.setAdapter(mAdapter);
         } else {
-//            mAdapter.notifyDataSetChanged();
             mAdapter.notifyItemChanged(mCrimeIndex);
         }
     }

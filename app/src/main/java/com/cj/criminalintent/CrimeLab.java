@@ -3,13 +3,15 @@ package com.cj.criminalintent;
 import android.content.Context;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 public class CrimeLab {
     private static CrimeLab sCrimeLab;
 
-    private List<Crime> mCrimes;
+    private ArrayList<Crime> mCrimes;
+    private HashMap<UUID, Integer> mMapIndex;
 
     public static CrimeLab get(Context context) {
         if (sCrimeLab == null)
@@ -19,12 +21,14 @@ public class CrimeLab {
 
     private CrimeLab(Context context) {
         mCrimes = new ArrayList<>();
+        mMapIndex = new HashMap<>();
         for (int i = 0; i < 100; ++i) {
             Crime crime = new Crime();
             crime.setIndex(i);
             crime.setTitle("Crime #" + i);
             crime.setSolved(i % 2 == 0);
             mCrimes.add(crime);
+            mMapIndex.put(crime.getId(), i);
         }
     }
 
@@ -33,9 +37,8 @@ public class CrimeLab {
     }
 
     public Crime getCrime(UUID id) {
-        for (Crime crime : mCrimes)
-            if (crime.getId().equals(id))
-                return crime;
-        return null;
+        if (!mMapIndex.containsKey(id))
+            return null;
+        return mCrimes.get(mMapIndex.get(id));
     }
 }
