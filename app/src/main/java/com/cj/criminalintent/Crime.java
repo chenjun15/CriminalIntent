@@ -4,7 +4,6 @@ import java.util.Date;
 import java.util.UUID;
 
 public class Crime {
-    private int mIndex;
     private UUID mId;
     private String mTitle;
     private Date mDate;
@@ -13,14 +12,6 @@ public class Crime {
     public Crime() {
         mId = UUID.randomUUID();
         mDate = new Date();
-    }
-
-    public int getIndex() {
-        return mIndex;
-    }
-
-    public void setIndex(int index) {
-        mIndex = index;
     }
 
     public UUID getId() {

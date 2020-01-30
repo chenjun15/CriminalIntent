@@ -18,11 +18,8 @@ import java.util.List;
 
 public class CrimeListFragment extends Fragment {
 
-    private static final String ARG_CRIME_INDEX = "crime_id";
-
     private RecyclerView mCrimeRecycleView;
     private CrimeAdapter mAdapter;
-    private int mCrimeIndex = -1;
 
     @Nullable
     @Override
@@ -31,9 +28,6 @@ public class CrimeListFragment extends Fragment {
 
         mCrimeRecycleView = view.findViewById(R.id.crime_recycler_view);
         mCrimeRecycleView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        if (savedInstanceState != null)
-            mCrimeIndex = savedInstanceState.getInt(ARG_CRIME_INDEX, -1);
 
         updateUI();
 
@@ -46,12 +40,6 @@ public class CrimeListFragment extends Fragment {
         updateUI();
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putSerializable(ARG_CRIME_INDEX, mCrimeIndex);
-    }
-
     private void updateUI() {
         CrimeLab crimeLab = CrimeLab.get(getActivity());
         List<Crime> crimes = crimeLab.getCrimes();
@@ -60,8 +48,7 @@ public class CrimeListFragment extends Fragment {
             mAdapter = new CrimeAdapter(crimes);
             mCrimeRecycleView.setAdapter(mAdapter);
         } else {
-//            mAdapter.notifyDataSetChanged();
-            mAdapter.notifyItemChanged(mCrimeIndex);
+            mAdapter.notifyDataSetChanged();
         }
     }
 
@@ -90,7 +77,6 @@ public class CrimeListFragment extends Fragment {
 
         @Override
         public void onClick(View view) {
-            mCrimeIndex = mCrime.getIndex();
             Intent intent = CrimeActivity.newIntent(getActivity(), mCrime.getId());
             startActivity(intent);
         }
