@@ -1,7 +1,9 @@
 package com.cj.criminalintent;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -37,6 +39,17 @@ public class CrimeFragment extends Fragment {
     private Button mDateButton;
     private Button mTimeButton;
     private CheckBox mSolvedCheckBox;
+
+    /**
+     * 判断是否平板设备
+     *
+     * @param context
+     * @return true:平板,false:手机
+     */
+    public static boolean isTabletDevice(Context context) {
+        return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >=
+                Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -83,10 +96,13 @@ public class CrimeFragment extends Fragment {
         mDateButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                FragmentManager manager = getFragmentManager();
-                DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
-                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
-                dialog.show(manager, DIALOG_DATE);
+                if (isTabletDevice(getContext())) {
+                    FragmentManager manager = getFragmentManager();
+                    DatePickerFragment dialog = DatePickerFragment.newInstance(mCrime.getDate());
+                    dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
+                    dialog.show(manager, DIALOG_DATE);
+                } else
+                    startActivityForResult(DatePickerActivity.newIntent(getContext(), mCrime.getDate()), REQUEST_DATE);
             }
         });
 
@@ -124,10 +140,10 @@ public class CrimeFragment extends Fragment {
         if (requestCode == REQUEST_DATE) {
             Date date = mCrime.getDate();
             Date date1 = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
-            date.setYear(date1.getYear());
-            date.setMonth(date1.getMonth());
-            date.setDate(date1.getDay());
-            mCrime.setDate(date);
+            date1.setHours(date.getHours());
+            date1.setMinutes(date.getMinutes());
+            date1.setSeconds(date.getSeconds());
+            mCrime.setDate(date1);
             updateDate();
         } else if (requestCode == REQUEST_TIME) {
             int time = data.getIntExtra(TimePickerFragment.EXTRA_TIME, 0);
