@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.cj.criminalintent.database.CrimeBaseHelper;
 import com.cj.criminalintent.database.CrimeCursorWrapper;
-import com.cj.criminalintent.database.CrimeDbSchema;
 import com.cj.criminalintent.database.CrimeDbSchema.CrimeTable;
 
 import java.util.ArrayList;
@@ -88,6 +87,7 @@ public class CrimeLab {
         values.put(CrimeTable.Cols.DATE, crime.getDate().getTime());
         values.put(CrimeTable.Cols.SOLVED, crime.isSolved() ? 1 : 0);
         values.put(CrimeTable.Cols.SUSPECT, crime.getSuspect());
+        values.put(CrimeTable.Cols.PHONE, crime.getPhone());
 
         return values;
     }
