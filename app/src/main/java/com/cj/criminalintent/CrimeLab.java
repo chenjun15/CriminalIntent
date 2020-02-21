@@ -10,6 +10,7 @@ import com.cj.criminalintent.database.CrimeCursorWrapper;
 import com.cj.criminalintent.database.CrimeDbSchema;
 import com.cj.criminalintent.database.CrimeDbSchema.CrimeTable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -24,6 +25,11 @@ public class CrimeLab {
         if (sCrimeLab == null)
             sCrimeLab = new CrimeLab(context);
         return sCrimeLab;
+    }
+
+    public File getPhotoFile(Crime crime) {
+        File fileDir = mContext.getFilesDir();
+        return new File(fileDir, crime.getPhotoFilename());
     }
 
     private CrimeLab(Context context) {
