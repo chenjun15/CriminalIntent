@@ -16,6 +16,7 @@ import android.text.format.DateFormat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -43,6 +44,7 @@ public class CrimeFragment extends Fragment {
     private static final int REQUEST_DATE = 0;
     private static final int REQUEST_CONTACT = 1;
     private static final int REQUEST_PHOTO = 2;
+    private static final int REQUEST_PHOTOVIEW = 3;
 
     private Crime mCrime;
     private File mPhotoFile;
@@ -53,6 +55,7 @@ public class CrimeFragment extends Fragment {
     private Button mReportButton;
     private ImageButton mPhotoButton;
     private ImageView mPhotoView;
+    ViewTreeObserver mPhotoObserver;
 
     public static CrimeFragment newInstance(UUID crimeId) {
         Bundle args = new Bundle();
@@ -173,17 +176,23 @@ public class CrimeFragment extends Fragment {
         });
 
         mPhotoView = v.findViewById(R.id.crime_photo);
-        updatePhotoView();
         mPhotoView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 FragmentManager manager = getFragmentManager();
                 PhotoViewerFragment dialog = PhotoViewerFragment.newInstance(mPhotoFile);
-                dialog.setTargetFragment(CrimeFragment.this, REQUEST_DATE);
+                dialog.setTargetFragment(CrimeFragment.this, REQUEST_PHOTOVIEW);
                 dialog.show(manager, DIALOG_PHOTO);
             }
         });
 
+        mPhotoObserver = mPhotoView.getViewTreeObserver();
+        mPhotoObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                updatePhotoView(mPhotoView.getWidth(), mPhotoView.getHeight());
+            }
+        });
         return v;
     }
 
@@ -219,8 +228,6 @@ public class CrimeFragment extends Fragment {
             Uri uri = FileProvider.getUriForFile(getActivity(), "com.cj.criminalintent.fileprovider", mPhotoFile);
 
             getActivity().revokeUriPermission(uri, Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-
-            updatePhotoView();
         }
     }
 
@@ -249,11 +256,11 @@ public class CrimeFragment extends Fragment {
         return report;
     }
 
-    private void updatePhotoView() {
+    private void updatePhotoView(int width, int height) {
         if (mPhotoFile == null || !mPhotoFile.exists()) {
             mPhotoView.setImageDrawable(null);
         } else {
-            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), getActivity());
+            Bitmap bitmap = PictureUtils.getScaledBitmap(mPhotoFile.getPath(), width, height);
             mPhotoView.setImageBitmap(bitmap);
         }
     }
