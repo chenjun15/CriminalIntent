@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 
 import com.cj.criminalintent.database.CrimeBaseHelper;
 import com.cj.criminalintent.database.CrimeCursorWrapper;
-import com.cj.criminalintent.database.CrimeDbSchema;
 import com.cj.criminalintent.database.CrimeDbSchema.CrimeTable;
 
 import java.io.File;

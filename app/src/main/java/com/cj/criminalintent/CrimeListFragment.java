@@ -15,6 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -30,7 +31,7 @@ public class CrimeListFragment extends Fragment {
     private Callbacks mCallbacks;
 
     /**
-     * Required interface for hosting activities
+     * Required interface for hosting activities.
      */
     public interface Callbacks {
         void onCrimeSelected(Crime crime);
@@ -66,6 +67,24 @@ public class CrimeListFragment extends Fragment {
             mSubtitleVisible = savedInstanceState.getBoolean(SAVED_SUBTITLE_VISIBLE);
 
         updateUI();
+
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
+            @Override
+            public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                return makeMovementFlags(0, ItemTouchHelper.RIGHT);
+            }
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                mAdapter.itemRemove(viewHolder.getAdapterPosition());
+            }
+        });
+        itemTouchHelper.attachToRecyclerView(mCrimeRecyclerView);
 
         return view;
     }
@@ -193,6 +212,11 @@ public class CrimeListFragment extends Fragment {
 
         public void setCrimes(List<Crime> crimes) {
             mCrimes = crimes;
+        }
+
+        public void itemRemove(int position) {
+            mCrimes.remove(position);
+            notifyItemRemoved(position);
         }
     }
 }
